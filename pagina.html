@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nova Colony - NASA Space Apps</title>
+  <style>
+    /* ===== Reset ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth; /* 🚀 Scroll suave */
+    }
+
+    body {
+      font-family: 'Arial', sans-serif;
+      color: #fff;
+      background: #000;
+      overflow-x: hidden;
+    }
+
+    /* ===== Fondo de galaxia animado ===== */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: url("https://www.transparenttextures.com/patterns/stardust.png"),
+                  radial-gradient(circle at center, #0a0f2c, #000);
+      z-index: -2;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -1;
+    }
+
+    /* ===== NavBar ===== */
+    nav {
+      position: fixed;
+      width: 100%;
+      top: 0;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 15px 0;
+      z-index: 1000;
+    }
+
+    nav ul {
+      display: flex;
+      justify-content: center;
+      list-style: none;
+      gap: 30px;
+    }
+
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 1.1rem;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #f6c90e;
+    }
+
+    /* ===== Encabezado ===== */
+    header {
+      text-align: center;
+      padding: 120px 20px 60px;
+    }
+
+    header img {
+      width: 220px;
+      animation: float 4s ease-in-out infinite;
+    }
+
+    header h1 {
+      font-size: 3rem;
+      margin-top: 20px;
+      color: #f6c90e;
+    }
+
+    header p {
+      font-size: 1.2rem;
+      color: #ccc;
+    }
+
+    /* ===== Secciones ===== */
+    section {
+      min-height: 100vh;
+      padding: 80px 20px;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: all 1s ease;
+    }
+
+    section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    h2 {
+      font-size: 2.2rem;
+      margin-bottom: 20px;
+      color: #f6c90e;
+    }
+
+    p {
+      max-width: 700px;
+      margin: 0 auto;
+      font-size: 1.2rem;
+      line-height: 1.6;
+      color: #ddd;
+    }
+
+    .contact a {
+      color: #00b7ff;
+      text-decoration: none;
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    /* ===== Footer ===== */
+    footer {
+      background: rgba(0, 0, 0, 0.8);
+      padding: 20px;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #aaa;
+    }
+
+    /* ===== Animaciones ===== */
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+  </style>
+</head>
+<body>
+  <!-- Fondo estrellado -->
+  <canvas id="stars"></canvas>
+
+  <!-- Navegación -->
+  <nav>
+    <ul>
+      <li><a href="#inicio">Inicio</a></li>
+      <li><a href="#about">Sobre Nosotros</a></li>
+      <li><a href="#project">Proyecto</a></li>
+      <li><a href="#contact">Contacto</a></li>
+    </ul>
+  </nav>
+
+  <!-- Encabezado -->
+  <header id="inicio">
+    <img src="LOGO.png" alt="Logo Nova Colony">
+    <h1>Nova Colony</h1>
+    <p>NASA Space Apps Challenge - Chía</p>
+  </header>
+
+  <!-- Secciones -->
+  <section id="about">
+    <h2>Sobre Nosotros</h2>
+    <p>Somos un equipo de Chía apasionado por la exploración espacial y la innovación tecnológica. Nuestra vision es mostrar como unos principiantes en la tecnologia pueden hacer grandes cosas y poder inspirar a los demás a lograr cosas grandes.</p>
+  </section>
+
+  <section id="project">
+    <h2>Proyecto</h2>
+    <p><strong>Beyond Earth</strong> - Una propuesta para imaginar y construir el futuro de la humanidad fuera de nuestro planeta. Beyond Earth, un juego educativo y de exploración donde el jugador debe explorar las distintas formas de habitat en otro planeta, viendo los retos que tendría una colonia real ( Oxigeno, comida y proteccion). El objetivo es mostrar de manera divertida y científica como seria vivir mas alla de la tierra.</p>
+  </section>
+
+  <section id="contact" class="contact">
+    <h2>Contacto</h2>
+    <a href="https://www.instagram.com/nova.colony?igsh=OTFhOHFiMG91dno1" target="_blank">@nova.colony</a>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 Nova Colony | NASA Space Apps Challenge</p>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    // Animación de entrada de secciones
+    const sections = document.querySelectorAll("section");
+    window.addEventListener("scroll", () => {
+      const triggerBottom = window.innerHeight * 0.85;
+      sections.forEach(sec => {
+        const secTop = sec.getBoundingClientRect().top;
+        if (secTop < triggerBottom) {
+          sec.classList.add("visible");
+        }
+      });
+    });
+
+    // Fondo animado con estrellas
+    const canvas = document.getElementById("stars");
+    const ctx = canvas.getContext("2d");
+    let stars = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      stars = [];
+      for (let i = 0; i < 200; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          radius: Math.random() * 1.5,
+          speed: Math.random() * 0.5
+        });
+      }
+    }
+
+    function animateStars() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "white";
+      stars.forEach(star => {
+        ctx.beginPath();
+        ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+        ctx.fill();
+        star.y += star.speed;
+        if (star.y > canvas.height) star.y = 0;
+      });
+      requestAnimationFrame(animateStars);
+    }
+
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
+    animateStars();
+  </script>
+</body>
+</html>
